@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
 
-def create_board(db: Session, board: schemas.BoardCreate):
+def create_board(db: Session, board: schemas.BoardRequest):
     db_board = models.Board(name=board.name, description=board.description)
     db.add(db_board)
     db.commit()

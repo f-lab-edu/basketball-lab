@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from . import crud, models, schemas, database
 
-models.Base.metadata.create_all(bind=database.engine)
+database.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI()
 
@@ -19,8 +19,8 @@ def get_db():
 async def root():
     return {"message":"Hello World"}
 
-@app.post("/boards/", status_code=status.HTTP_201_CREATED, response_model=schemas.Board)
-async def create_board(board: schemas.BoardCreate, db: Session = Depends(get_db)):
+@app.post("/boards/", status_code=status.HTTP_201_CREATED, response_model=schemas.BoardResponse)
+async def create_board(board: schemas.BoardRequest, db: Session = Depends(get_db)):
     db_board = crud.get_board_by_name(db, name=board.name)
     if db_board:
         raise HTTPException(status_code=400, detail="Board with this name already exists")
