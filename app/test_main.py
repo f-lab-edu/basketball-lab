@@ -25,3 +25,18 @@ def test_create_board_name_duplicate():
         "description": ""
     })
     assert response2.status_code == 400
+
+
+def test_retrieve_board():
+    test_create_board()
+    response = client.get("/boards/"+"1")
+    assert response.status_code == 200
+    assert response.json()["id"] == 1
+    assert response.json()["description"] == ""
+
+def test_retrieve_board_not_exist():
+    time_sec = time.time()
+    response = client.get("/boards/"+str(time_sec))
+    assert response.status_code == 400
+
+
