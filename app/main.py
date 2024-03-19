@@ -1,8 +1,8 @@
-import uvicorn 
+import uvicorn
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from . import crud, models, schemas, database
+from app import crud, models, schemas, database
 
 database.Base.metadata.create_all(bind=database.engine)
 
@@ -25,6 +25,13 @@ async def create_board(board: schemas.BoardRequest, db: Session = Depends(get_db
     if db_board:
         raise HTTPException(status_code=400, detail="Board with this name already exists")
     return crud.create_board(db=db, board=board)
+
+@app.get("/boards/{boardId}", status_code=status.HTTP_200_OK, response_model=schemas.BoardResponse)
+async def retrieve_board(boardId, db: Session = Depends(get_db)):
+    db_board = crud.get_board_by_id(db, id=boardId)
+    if not db_board:
+        raise HTTPException(status_code=400, detail="Board with this ID not exists")
+    return db_board
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000,

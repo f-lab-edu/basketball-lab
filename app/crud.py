@@ -10,3 +10,6 @@ def create_board(db: Session, board: schemas.BoardRequest):
 
 def get_board_by_name(db: Session, name: str):
     return db.query(models.Board).filter(models.Board.name == name).first()
+
+def get_board_by_id(db: Session, id: int):
+    return db.query(models.Board).filter(models.Board.id == id).first()
