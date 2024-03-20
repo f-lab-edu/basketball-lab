@@ -13,3 +13,6 @@ def get_board_by_name(db: Session, name: str):
 
 def get_board_by_id(db: Session, id: int):
     return db.query(models.Board).filter(models.Board.id == id).first()
+
+def get_all_boards(db: Session):
+    return db.query(models.Board).all()

@@ -40,3 +40,12 @@ def test_retrieve_board_not_exist():
     assert response.status_code == 400
 
 
+def test_retrieve_all_boards():
+    test_create_board()
+    response = client.get("/boards/")
+    print('go')
+    print(response.__dict__)
+    assert response.status_code == 200
+
+def test_retrieve_all_empty_boards():
+    pass
