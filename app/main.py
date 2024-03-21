@@ -37,7 +37,7 @@ async def retrieve_board(boardId, db: Session = Depends(get_db)):
 @app.get("/boards/", status_code=status.HTTP_200_OK, response_model=List[schemas.BoardResponse])
 async def retrieve_all_boards(db: Session = Depends(get_db)):
     db_board = crud.get_all_boards(db)
-    if not db_board:
+    if db_board is None:
         raise HTTPException(status_code=400, detail="Boards not exist")
     return db_board
     
