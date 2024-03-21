@@ -42,4 +42,10 @@ def test_retrieve_board_not_exist():
     response = client.get("/boards/"+str(time_sec))
     assert response.status_code == 404
 
+def test_retrieve_all_boards():
+    _, response = create_board_name_and_response()
+    response = client.get("/boards/")
+    assert response.status_code == 200
 
+def test_retrieve_all_empty_boards():
+    pass
