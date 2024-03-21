@@ -27,10 +27,10 @@ async def create_board(board: schemas.BoardRequest, db: Session = Depends(get_db
     return crud.create_board(db=db, board=board)
 
 @app.get("/boards/{boardId}", status_code=status.HTTP_200_OK, response_model=schemas.BoardResponse)
-async def retrieve_board(boardId, db: Session = Depends(get_db)):
+async def retrieve_board(boardId: int, db: Session = Depends(get_db)):
     db_board = crud.get_board_by_id(db, id=boardId)
-    if not db_board:
-        raise HTTPException(status_code=400, detail="Board with this ID not exists")
+    if db_board is None:
+        raise HTTPException(status_code=404, detail="Board with this ID not exists")
     return db_board
 
 if __name__ == '__main__':
