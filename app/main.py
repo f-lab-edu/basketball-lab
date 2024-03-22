@@ -50,7 +50,7 @@ async def modify_board(boardId: int, board: schemas.BoardRequest, db: Session = 
     if board.name and board.name != db_board_by_id.name:
         db_board_by_name = crud.get_board_by_name(db, name=board.name)
         if db_board_by_name:
-            raise HTTPException(status_code=400, detail="Board with this name already does not exist")
+            raise HTTPException(status_code=400, detail="Board with this name already exist")
         db_board_by_id.name = board.name
     
     if board.description:
