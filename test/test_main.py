@@ -31,10 +31,18 @@ def client(db):
     app.dependency_overrides[get_db] = override_get_db
     yield TestClient(app)
 
-#client = TestClient(app)
+@pytest.fixture(scope="function")
+def clear_database():
+    # Obtain a new session
+    with TestingSessionLocal() as db:
+        # Iterate over all tables and delete their contents
+        for table in reversed(Base.metadata.sorted_tables):
+            db.execute(table.delete())
+        # Commit the transaction to ensure changes are applied
+        db.commit()
 
-def create_board_response(client):
-    time_sec = int(time.time())
+def create_board_response(client, offset=0):
+    time_sec = int(time.time())+offset
     response = client.post("/boards/", json={
         "name": "board"+str(time_sec),
         "description": ""
@@ -44,11 +52,10 @@ def create_board_response(client):
 def test_create_board(client):
     response = create_board_response(client)
     assert response.status_code == 201
-    #print(response.__dict__)
     assert response.json()["name"] == response.json()["name"]
     assert response.json()["description"] == ""
 
-def test_create_board_name_duplicate(client):
+def test_create_board_name_already_exist(client):
     response1 = client.post("/boards/", json={
         "name": "board",
         "description": ""
@@ -59,7 +66,6 @@ def test_create_board_name_duplicate(client):
     })
     assert response2.status_code == 400
 
-
 def test_retrieve_board(client):
     create_board_response(client)
     response = client.get("/boards/1")
@@ -67,20 +73,19 @@ def test_retrieve_board(client):
     assert response.json()["id"] == 1
     assert response.json()["description"] == ""
 
-def test_retrieve_board_not_exist(client):
+def test_retrieve_board_id_not_exist(client):
     time_sec = int(time.time())
     response = client.get("/boards/"+str(time_sec))
     assert response.status_code == 404
-
 
 def test_retrieve_all_boards(client):
     create_board_response(client)
     response = client.get("/boards/")
     assert response.status_code == 200
 
-def test_retrieve_all_empty_boards():
-    pass
-
+def test_retrieve_all_boards_not_exist(client, clear_database):
+    response = client.get("/boards")
+    assert response.status_code == 404
 
 def test_modify_board(client):
     #time.sleep(1) #test 중에 int(time.time())의 값이 같은 경우가 있어 
@@ -95,3 +100,39 @@ def test_modify_board(client):
     assert response.json()["id"] == create_response.json()["id"]
     assert response.json()["name"] == "board_name_modified"
     assert response.json()["description"] == "this board description is modified"
+
+def test_modify_board_id_not_found(client):
+    create_response = create_board_response(client)
+    time_sec = int(time.time())+1
+    response = client.patch("/boards/"+str(time_sec), json={
+        "name": "board_name_modified",
+        "description": "this board description is modified"
+    })
+    print(response.json())
+    assert response.status_code == 404
+
+def test_modify_board_name_already_exist(client):
+    create_response1 = create_board_response(client)
+    assert create_response1.status_code == 201, create_response1.text
+    create_response2 = create_board_response(client, offset=1)
+    assert create_response2.status_code == 201, create_response2.text
+    response = client.patch("/boards/"+str(create_response1.json()["id"]), json={
+        "name": "board_name_modified",
+        "description": "this board description is modified"
+    })
+    response2 = client.patch("/boards/"+str(create_response2.json()["id"]), json={
+        "name": "board_name_modified",
+        "description": "description is different"
+    })
+    assert response2.status_code == 400
+
+def test_modify_board_description_empty(client):
+    create_response1 = create_board_response(client)
+    assert create_response1.status_code == 201, create_response1.text
+    response = client.patch("/boards/"+str(create_response1.json()["id"]), json={
+        "name": "board_name_modified",
+        "description": ""
+    })
+    assert response.status_code == 200
+    assert response.json()["description"] == ""
+
