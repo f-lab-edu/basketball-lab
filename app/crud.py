@@ -16,3 +16,6 @@ def get_board_by_id(db: Session, id: int):
 
 def get_all_boards(db: Session):
     return db.query(models.Board).all() # all method returns lists only, not None
+
+def delete_board(db: Session, id:int):
+    return db.query(models.Board).filter(models.Board.id == id).delete()

@@ -61,7 +61,12 @@ async def modify_board(boardId: int, board: schemas.BoardRequest, db: Session = 
 
     return db_board_by_id
 
-
+@app.delete("/boards/{boardId}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_board(boardId:int, db: Session = Depends(get_db)):
+    db_board_num_to_delete = crud.delete_board(db, id=boardId)
+    if db_board_num_to_delete == 0:
+        raise HTTPException(status_code=404, detail="Board with this ID does not exist")
+    
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000,
                 reload=True)
