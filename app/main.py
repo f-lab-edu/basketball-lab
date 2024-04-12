@@ -61,6 +61,9 @@ async def modify_board(boardId: int, board: schemas.BoardRequest, db: Session = 
 
     return db_board_by_id
 
+@app.post("/boards/{boardId}/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
+async def create_post(boardId: int, post: schemas.PostRequest, db: Session=Depends(get_db)):
+    return crud.create_post(db=db, post=post, board_id=boardId)
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000,

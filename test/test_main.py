@@ -136,3 +136,5 @@ def test_modify_board_description_empty(client):
     assert response.status_code == 200
     assert response.json()["description"] == ""
 
+def test_create_post(client):
+    pass

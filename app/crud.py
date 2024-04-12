@@ -16,3 +16,11 @@ def get_board_by_id(db: Session, id: int):
 
 def get_all_boards(db: Session):
     return db.query(models.Board).all() # all method returns lists only, not None
+
+def create_post(db: Session, post: schemas.PostRequest, board_id: int):
+    db_post = models.Post(title=post.title, content=post.content, author=post.author,
+                          board_id=board_id)
+    db.add(db_post)
+    db.commit()
+    db.refresh(db_post)
+    return db_post
