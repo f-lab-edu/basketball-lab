@@ -13,15 +13,13 @@ class BoardResponse(BaseModel):
 class PostRequest(BaseModel):
     title: str
     content: str
-    author: int
-    timestamp: datetime
-    board_id: int
+    author: str
 
 class PostResponse(BaseModel):
     id: int
     title: str
     content: str
-    author: int
+    author: str
     timestamp: datetime
     board_id: int 
         

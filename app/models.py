@@ -18,7 +18,7 @@ class Post(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
     content = Column(String)
-    author = Column(Integer, index=True)
+    author = Column(String, index=True)
     timestamp = Column(DateTime, index=True, default=datetime.utcnow)
     board_id = Column(Integer, ForeignKey('boards.id'))
 
