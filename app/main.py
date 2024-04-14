@@ -1,13 +1,15 @@
 import uvicorn
-from typing import List 
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from typing import List 
 
-from app import crud, models, schemas, database
+from . import crud, schemas, database
 
 database.Base.metadata.create_all(bind=database.engine)
 
-app = FastAPI()
+def get_application() -> FastAPI:
+    application = FastAPI()
+    return application
 
 def get_db():
     db = database.SessionLocal()
@@ -16,8 +18,10 @@ def get_db():
     finally:
         db.close()
 
+app = get_application()
+
 @app.get("/", status_code=status.HTTP_200_OK)
-async def root():
+async def root() -> dict:
     return {"message":"Hello World"}
 
 @app.post("/boards/", status_code=status.HTTP_201_CREATED, response_model=schemas.BoardResponse)
@@ -71,3 +75,4 @@ async def create_post(boardId: int, post: schemas.PostRequest, db: Session=Depen
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000,
                 reload=True)
+

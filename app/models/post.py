@@ -1,16 +1,8 @@
+from datetime import datetime
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import relationship
-from datetime import datetime
 
-from .database import Base
-
-class Board(Base):
-    __tablename__ = 'boards'
-    
-    id = Column(Integer, primary_key=True)
-    name = Column(String, unique=True)
-    description = Column(String, nullable=True)
-
+from app.database import Base
 
 class Post(Base):
     __tablename__ = 'posts'
@@ -24,4 +16,3 @@ class Post(Base):
 
     board = relationship("Board", back_populates="posts")
 
-Board.posts = relationship("Post", order_by=Post.id, back_populates="board")
