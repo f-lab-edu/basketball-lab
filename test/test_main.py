@@ -104,14 +104,12 @@ def test_modify_board_id_not_found(client):
         "name": "board_name_modified",
         "description": "this board description is modified"
     })
-    print(response.json())
     assert response.status_code == 404
 
 def test_modify_board_name_already_exist(client):
     create_response1 = create_board_response(client)
     assert create_response1.status_code == 201, create_response1.text    
     create_response2 = create_board_response(client)
-    print(create_response2.json())
     assert create_response2.status_code == 201, create_response2.text
     response = client.patch("/boards/"+str(create_response1.json()["id"]), json={
         "name": "board_name_modified",
@@ -147,7 +145,6 @@ def test_create_post(client):
     }
     
     response = client.post(f"/boards/{board_id}/posts", json=post_data)
-    print(response.json())
     assert response.status_code == 201
     assert response.json()["title"] == post_data["title"]
     assert response.json()["content"] == post_data["content"]
@@ -163,5 +160,4 @@ def test_create_post_board_id_not_found(client, clear_database):
     }
 
     response = client.post("/boards/1/posts", json=post_data)
-    print(response.json())
     assert response.status_code == 404
