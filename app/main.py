@@ -73,6 +73,16 @@ async def create_post(boardId: int, post: schemas.PostRequest, db: Session=Depen
         raise HTTPException(status_code=404, detail="Board with this ID does not exist")
     return crud.create_post(db=db, post=post, board_id=boardId)
 
+@app.get("/boards/{boardId}/posts/{postId}", status_code=status.HTTP_200_OK, response_model=schemas.PostResponse)
+async def retrieve_post(boardId: int, postId: int, db: Session=Depends(get_db)) -> Optional[Post]:
+    db_board = crud.get_board_by_id(db, id=boardId)
+    if db_board is None:
+        raise HTTPException(status_code=404, detail="Board with this ID does not exist")
+    db_post = crud.get_post(db, boardId, postId)
+    if db_post is None:
+        raise HTTPException(status_code=404, detail="Post with this ID does not exist")
+    return db_post
+
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000,
                 reload=True)

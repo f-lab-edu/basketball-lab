@@ -41,7 +41,7 @@ def clear_database():
         # Commit the transaction to ensure changes are applied
         db.commit()
 
-def create_board_response(client, offset=0):
+def create_board_response(client):
     id = uuid.uuid1()
     response = client.post("/boards/", json={
         "name": "board"+str(int(id)),
@@ -150,14 +150,26 @@ def test_create_post(client):
     assert response.json()["content"] == post_data["content"]
     assert response.json()["author"] == post_data["author"]
 
-def test_create_post_board_id_not_found(client, clear_database):
+def create_post_response(client, boardId: int):
     post_data = {
         "title": "Hello World",
         "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. \
                     Maecenas sodales, odio et accumsan auctor, purus erat aliquam mauris, \
-                    et maximus quam libero ut nulla. ",
+                    et maximus quam libero ut nulla.",
         "author": "author1"
     }
 
-    response = client.post("/boards/1/posts", json=post_data)
-    assert response.status_code == 404
+    response = client.post("/boards/"+str(boardId)+"/posts", json=post_data)
+    return response
+
+def test_create_post_board_id_not_found(client, clear_database):
+    post_response = create_post_response(client, 1)
+    assert post_response.status_code == 404
+
+def test_retrieve_post(client, clear_database):
+    board_response = create_board_response(client)
+    board_id = board_response.json()["id"]
+    post_response = create_post_response(client, board_id)
+    post_id = post_response.json()["id"]
+    response = client.post("/boards/"+str(board_id)+"/posts/"+str(post_id))
+    assert response.status_code == 200
