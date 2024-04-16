@@ -171,5 +171,20 @@ def test_retrieve_post(client, clear_database):
     board_id = board_response.json()["id"]
     post_response = create_post_response(client, board_id)
     post_id = post_response.json()["id"]
-    response = client.post("/boards/"+str(board_id)+"/posts/"+str(post_id))
+    response = client.get("/boards/"+str(board_id)+"/posts/"+str(post_id))
     assert response.status_code == 200
+    assert response.json()["title"] == "Hello World"
+    assert response.json()["author"] == "author1"
+
+def test_retrieve_post_board_id_not_found(client, clear_database):
+    board_id, post_id = 1,1
+    response = client.get("/boards/"+str(board_id)+"/posts/"+str(post_id))
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Board with this ID does not exist"
+
+def test_retrieve_post_post_id_not_found(client, clear_database):
+    board_response = create_board_response(client)
+    board_id, post_id = board_response.json()["id"], 1
+    response = client.get("/boards/"+str(board_id)+"/posts/"+str(post_id))
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Post with this ID does not exist"
