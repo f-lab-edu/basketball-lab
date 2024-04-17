@@ -89,7 +89,7 @@ async def retrieve_posts(boardId: int, offset: int, limit: int, db: Session=Depe
     if db_board is None:
         raise HTTPException(status_code=404, detail="Board with this ID does not exist")
     db_posts = crud.get_posts_by_board_id(db, board_id=boardId, offset=offset, limit=limit)
-    if db_posts is None:
+    if not db_posts: # This checks for an empty list as well as None
         raise HTTPException(status_code=404, detail="No posts found")
     return db_posts
 
