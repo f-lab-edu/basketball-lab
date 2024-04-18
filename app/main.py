@@ -1,13 +1,16 @@
 import uvicorn
-from typing import List 
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from typing import List, Optional
 
-from app import crud, models, schemas, database
-
+from . import crud, schemas, database
+from app.models.board import Board
+from app.models.post import Post
 database.Base.metadata.create_all(bind=database.engine)
 
-app = FastAPI()
+def get_application() -> FastAPI:
+    application = FastAPI()
+    return application
 
 def get_db():
     db = database.SessionLocal()
@@ -16,33 +19,35 @@ def get_db():
     finally:
         db.close()
 
+app = get_application()
+
 @app.get("/", status_code=status.HTTP_200_OK)
-async def root():
+async def root() -> dict:
     return {"message":"Hello World"}
 
 @app.post("/boards/", status_code=status.HTTP_201_CREATED, response_model=schemas.BoardResponse)
-async def create_board(board: schemas.BoardRequest, db: Session = Depends(get_db)):
+async def create_board(board: schemas.BoardRequest, db: Session = Depends(get_db)) -> Board:
     db_board = crud.get_board_by_name(db, name=board.name)
     if db_board:
         raise HTTPException(status_code=400, detail="Board with this name already exist")
     return crud.create_board(db=db, board=board)
 
 @app.get("/boards/{boardId}", status_code=status.HTTP_200_OK, response_model=schemas.BoardResponse)
-async def retrieve_board(boardId: int, db: Session = Depends(get_db)):
+async def retrieve_board(boardId: int, db: Session = Depends(get_db)) -> Optional[Board]:
     db_board = crud.get_board_by_id(db, id=boardId)
     if db_board is None:
         raise HTTPException(status_code=404, detail="Board with this ID does not exist")
     return db_board
 
 @app.get("/boards/", status_code=status.HTTP_200_OK, response_model=List[schemas.BoardResponse])
-async def retrieve_all_boards(db: Session = Depends(get_db)):
+async def retrieve_all_boards(db: Session = Depends(get_db)) -> List[Board]:
     db_board = crud.get_all_boards(db)
     if not db_board: # This checks for an empty list as well as None
         raise HTTPException(status_code=404, detail="Boards do not exist")
     return db_board
 
 @app.patch("/boards/{boardId}", status_code=status.HTTP_200_OK, response_model=schemas.BoardResponse)    
-async def modify_board(boardId: int, board: schemas.BoardRequest, db: Session = Depends(get_db)):
+async def modify_board(boardId: int, board: schemas.BoardRequest, db: Session = Depends(get_db)) -> Optional[Board]:
     db_board_by_id = crud.get_board_by_id(db, id=boardId)
     if db_board_by_id is None:
         raise HTTPException(status_code=404, detail="Board with this ID does not exist")
@@ -61,7 +66,14 @@ async def modify_board(boardId: int, board: schemas.BoardRequest, db: Session = 
 
     return db_board_by_id
 
+@app.post("/boards/{boardId}/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
+async def create_post(boardId: int, post: schemas.PostRequest, db: Session=Depends(get_db)) -> Post:
+    db_board = crud.get_board_by_id(db, id=boardId)
+    if db_board is None:
+        raise HTTPException(status_code=404, detail="Board with this ID does not exist")
+    return crud.create_post(db=db, post=post, board_id=boardId)
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000,
                 reload=True)
+
