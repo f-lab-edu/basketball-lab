@@ -66,7 +66,7 @@ async def modify_board(boardId: int, board: schemas.BoardRequest, db: Session = 
 
     return db_board_by_id
 
-@app.post("/boards/{boardId}/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
+@app.post("/boards/{boardId}/posts/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse)
 async def create_post(boardId: int, post: schemas.PostRequest, db: Session=Depends(get_db)) -> Post:
     db_board = crud.get_board_by_id(db, id=boardId)
     if db_board is None:
@@ -78,10 +78,20 @@ async def retrieve_post(boardId: int, postId: int, db: Session=Depends(get_db)) 
     db_board = crud.get_board_by_id(db, id=boardId)
     if db_board is None:
         raise HTTPException(status_code=404, detail="Board with this ID does not exist")
-    db_post = crud.get_post(db, boardId, postId)
+    db_post = crud.get_post_by_id(db, boardId, postId)
     if db_post is None:
         raise HTTPException(status_code=404, detail="Post with this ID does not exist")
     return db_post
+
+@app.get("/boards/{boardId}/posts/", status_code=status.HTTP_200_OK, response_model=List[schemas.PostResponse])
+async def retrieve_posts(boardId: int, offset: int, limit: int, db: Session=Depends(get_db)) -> List[Post]:
+    db_board = crud.get_board_by_id(db, id=boardId)
+    if db_board is None:
+        raise HTTPException(status_code=404, detail="Board with this ID does not exist")
+    db_posts = crud.get_posts_by_board_id(db, board_id=boardId, offset=offset, limit=limit)
+    if not db_posts: # This checks for an empty list as well as None
+        raise HTTPException(status_code=404, detail="No posts found")
+    return db_posts
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000,

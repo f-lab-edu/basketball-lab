@@ -30,5 +30,8 @@ def create_post(db: Session, post: schemas.PostRequest, board_id: int) -> Post:
     db.refresh(db_post)
     return db_post
 
-def get_post(db: Session, board_id: int, post_id:int) -> Optional[Post]:
+def get_post_by_id(db: Session, board_id: int, post_id:int) -> Optional[Post]:
     return db.query(Post).filter(Post.id == post_id, Post.board_id == board_id).first()
+
+def get_posts_by_board_id(db: Session, board_id: int, offset: int, limit: int) -> List[Post]:
+    return db.query(Post).filter(Post.board_id == board_id).offset(offset).limit(limit).all()
