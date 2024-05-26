@@ -1,7 +1,10 @@
+import io
+import json
+import pandas as pd 
 import uvicorn
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, File, UploadFile, BackgroundTasks
 from sqlalchemy.orm import Session
-from typing import List, Optional
+from typing import List, Optional, Annotated
 
 from . import crud, schemas, database
 from app.models.board import Board
@@ -92,6 +95,41 @@ async def retrieve_posts(boardId: int, offset: int, limit: int, db: Session=Depe
     if not db_posts: # This checks for an empty list as well as None
         raise HTTPException(status_code=404, detail="No posts found")
     return db_posts
+'''
+@app.post("/files/")
+async def create_file(file: Annotated[bytes, File()]):
+    return {"file_size": len(file)}
+
+@app.post("/uploadfile/")
+async def create_upload_file(file: UploadFile):
+    return {"filename": file.filename}
+
+def write_notification(email: str, message=""):
+    with open("log.txt", mode="w") as email_file:
+        content = f"notification for {email}: {message}"
+        email_file.write(content)
+
+@app.post("/send-notification/{email}")
+async def send_notification(email: str, background_tasks: BackgroundTasks):
+    background_tasks.add_task(write_notification, email, message="some notification")
+    return {"message": "Notification sent in the background"}
+'''
+
+def parsing_excel_file(file: UploadFile):
+    content = file.file.read()
+    df = pd.read_excel(io.BytesIO(content), engine='openpyxl')
+    data = df.to_dict(orient='records')
+    
+    with open("log.txt", mode="w", encoding="utf-8") as data_file:
+        json.dump(data, data_file, ensure_ascii=False, indent=4)
+
+    return data
+
+@app.post("/uploadfile/")
+async def create_upload_file(file: UploadFile, background_tasks: BackgroundTasks):
+    background_tasks.add_task(parsing_excel_file, file)
+    
+    return {"message": "File received. Processing in background."}
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000,
