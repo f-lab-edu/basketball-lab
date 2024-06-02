@@ -363,23 +363,23 @@
         "Unnamed: 0": NaN,
         "Unnamed: 1": "합    계",
         "Unnamed: 2": NaN,
-        "Unnamed: 3": 6,
-        "Unnamed: 4": 16,
-        "Unnamed: 5": 22,
-        "Unnamed: 6": 7,
-        "Unnamed: 7": 3,
-        "Unnamed: 8": 0,
-        "Unnamed: 9": 6,
-        "Unnamed: 10": 9,
-        "Unnamed: 11": 9,
-        "Unnamed: 12": 10,
-        "Unnamed: 13": 0,
-        "Unnamed: 14": 34,
+        "Unnamed: 3": 6,  # offense_rebound
+        "Unnamed: 4": 16, # defense_rebound
+        "Unnamed: 5": 22, # total_rebound
+        "Unnamed: 6": 7,  # assist
+        "Unnamed: 7": 3,  # steal
+        "Unnamed: 8": 0,  # block
+        "Unnamed: 9": 6,  # score_1Q
+        "Unnamed: 10": 9, # score_2Q
+        "Unnamed: 11": 9, # score_3Q
+        "Unnamed: 12": 10,# score_4Q
+        "Unnamed: 13": 0, # score_OT
+        "Unnamed: 14": 34,# score_Total
         "Unnamed: 15": NaN,
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 19
         "Unnamed: 0": NaN,
         "Unnamed: 1": NaN,
         "Unnamed: 2": NaN,
@@ -399,7 +399,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 20
         "Unnamed: 0": NaN,
         "Unnamed: 1": "팀   명",
         "Unnamed: 2": NaN,
@@ -419,7 +419,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 21
         "Unnamed: 0": NaN,
         "Unnamed: 1": NaN,
         "Unnamed: 2": NaN,
@@ -439,7 +439,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 22
         "Unnamed: 0": NaN,
         "Unnamed: 1": "번 호",
         "Unnamed: 2": "이     름",
@@ -459,7 +459,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 23
         "Unnamed: 0": NaN,
         "Unnamed: 1": NaN,
         "Unnamed: 2": NaN,
@@ -479,7 +479,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 24
         "Unnamed: 0": NaN,
         "Unnamed: 1": 1,
         "Unnamed: 2": "이주권",
@@ -499,7 +499,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 25
         "Unnamed: 0": NaN,
         "Unnamed: 1": 7,
         "Unnamed: 2": "이승진",
@@ -519,7 +519,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 26
         "Unnamed: 0": NaN,
         "Unnamed: 1": 8,
         "Unnamed: 2": "김규선",
@@ -539,7 +539,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 27
         "Unnamed: 0": NaN,
         "Unnamed: 1": 11,
         "Unnamed: 2": "김태규",
@@ -559,7 +559,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 28
         "Unnamed: 0": NaN,
         "Unnamed: 1": 12,
         "Unnamed: 2": "이범학",
@@ -579,7 +579,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 29
         "Unnamed: 0": NaN,
         "Unnamed: 1": 14,
         "Unnamed: 2": "임영훈",
@@ -599,7 +599,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 30
         "Unnamed: 0": NaN,
         "Unnamed: 1": 20,
         "Unnamed: 2": "임비룡",
@@ -619,7 +619,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 31
         "Unnamed: 0": NaN,
         "Unnamed: 1": 22,
         "Unnamed: 2": "김경신",
@@ -639,7 +639,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 32
         "Unnamed: 0": NaN,
         "Unnamed: 1": 31,
         "Unnamed: 2": "심명보",
@@ -659,7 +659,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 33
         "Unnamed: 0": NaN,
         "Unnamed: 1": 36,
         "Unnamed: 2": "김승현",
@@ -679,7 +679,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 34
         "Unnamed: 0": NaN,
         "Unnamed: 1": 83,
         "Unnamed: 2": "홍성욱",
@@ -699,7 +699,7 @@
         "Unnamed: 16": NaN,
         "Unnamed: 17": NaN
     },
-    {
+    {#dictionary 35
         "Unnamed: 0": NaN,
         "Unnamed: 1": 91,
         "Unnamed: 2": "최승호",

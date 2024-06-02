@@ -1,15 +1,15 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
-Base = declarative_base()
+from app.database import Base
+
 
 class Report(Base):
     __tablename__ = 'reports'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     report = Column(String)
-    
+
     team_results = relationship('TeamResult', back_populates='report', cascade='all, delete, delete-orphan')
 
 class TeamResult(Base):
