@@ -12,7 +12,6 @@ def parse_row(index: int, d: dict, db: Session, report_id=None, team_result_id=N
         db.add(new_report)
         db.commit()
         db.refresh(new_report)
-        print(new_report)
         return new_report.id
     
     elif index == 2:
@@ -131,8 +130,5 @@ def parsing_excel_file(file: UploadFile, db: Session):
             team_result_id = parse_row(index, row, db, report_id=report_id)
         elif 6 <= index <= 17 or 24 <= index <= 35:
             parse_row(index, row, db, team_result_id=team_result_id)
-
-    with open("log.txt", mode="w", encoding="utf-8") as data_file:
-        json.dump(data, data_file, ensure_ascii=False, indent=4)
 
     return data
