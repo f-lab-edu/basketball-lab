@@ -1,17 +1,22 @@
 import uvicorn
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, File, UploadFile, BackgroundTasks
 from sqlalchemy.orm import Session
-from typing import List, Optional
+from typing import List, Optional, Annotated
+from contextlib import contextmanager
 
 from . import crud, schemas, database
 from app.models.board import Board
 from app.models.post import Post
-database.Base.metadata.create_all(bind=database.engine)
+from app.services.excel_parsing import parsing_excel_file
+
+def init_db():
+    database.Base.metadata.create_all(bind=database.engine)
 
 def get_application() -> FastAPI:
     application = FastAPI()
     return application
 
+@contextmanager
 def get_db():
     db = database.SessionLocal()
     try:
@@ -20,6 +25,10 @@ def get_db():
         db.close()
 
 app = get_application()
+
+@app.on_event("startup")
+def on_startup():
+    init_db()
 
 @app.get("/", status_code=status.HTTP_200_OK)
 async def root() -> dict:
@@ -93,7 +102,15 @@ async def retrieve_posts(boardId: int, offset: int, limit: int, db: Session=Depe
         raise HTTPException(status_code=404, detail="No posts found")
     return db_posts
 
+@app.post("/uploadfile/")
+async def create_upload_file(file: UploadFile, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    def parsing_excel_file_task(file: UploadFile, db: Session):
+        with get_db() as db_session:
+            parsing_excel_file(file, db_session)
+
+    background_tasks.add_task(parsing_excel_file_task, file, db)
+    return {"message": "File received. Processing in background."}
+
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000,
                 reload=True)
-
