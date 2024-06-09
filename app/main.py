@@ -92,6 +92,20 @@ async def retrieve_posts(boardId: int, offset: int, limit: int, db: Session=Depe
     if not db_posts: # This checks for an empty list as well as None
         raise HTTPException(status_code=404, detail="No posts found")
     return db_posts
+    
+@app.patch("/boards/{boardId}/posts/{postId}", status_code=status.HTTP_200_OK, response_model=schemas.PostResponse)    
+async def modify_post(boardId: int, postId: int, post: schemas.PostResponse, db: Session = Depends(get_db)) -> Optional[Post]:
+    db_board = crud.get_board_by_id(db, id=boardId)
+    if db_board is None:
+        raise HTTPException(status_code=404, detail="Board with this ID does not exist")
+    
+    db_post = crud.get_post_by_id(db, boardId, postId)
+    if db_post is None:
+        raise HTTPException(status_code=404, detail="Post with this ID does not exist")
+    
+    updated_post = crud.update_post(db, db_post, post)
+    print(updated_post)
+    return updated_post
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8000,
