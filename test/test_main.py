@@ -299,3 +299,25 @@ def test_modify_post_post_id_not_found(client, clear_database):
         "board_id": board_id
     })
     assert response.status_code == 404
+
+def test_delete_post(client, clear_database):
+    board_response = create_board_response(client)
+    board_id = board_response.json()["id"]
+    post_response = create_post_response(client, board_id)
+    post_id = post_response.json()["id"]
+
+    response = client.delete(f"/boards/{board_id}/posts/{post_id}/")
+    assert response.status_code == 204
+
+def test_delete_post_board_id_not_found(client, clear_database):
+    board_id = 1
+    post_id = 1
+    response = client.delete(f"/boards/{board_id}/posts/{post_id}/")
+    assert response.status_code == 404
+
+def test_delete_post_post_id_not_found(client, clear_database):
+    board_response = create_board_response(client)
+    board_id = board_response.json()["id"]
+    post_id = 1
+    response = client.delete(f"/boards/{board_id}/posts/{post_id}/")
+    assert response.status_code == 404

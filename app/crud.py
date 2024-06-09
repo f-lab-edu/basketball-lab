@@ -44,3 +44,7 @@ def update_post(db: Session, db_post: Post, post: schemas.PostResponse) -> Post:
     db.commit()
     db.refresh(db_post)
     return db_post
+
+def delete_post(db: Session, post: Post):
+    db.delete(post)
+    db.commit()
