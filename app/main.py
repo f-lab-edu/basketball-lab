@@ -104,7 +104,6 @@ async def modify_post(boardId: int, postId: int, post: schemas.PostResponse, db:
         raise HTTPException(status_code=404, detail="Post with this ID does not exist")
     
     updated_post = crud.update_post(db, db_post, post)
-    print(updated_post)
     return updated_post
 
 if __name__ == '__main__':

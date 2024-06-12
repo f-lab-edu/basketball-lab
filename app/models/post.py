@@ -11,7 +11,7 @@ class Post(Base):
     title = Column(String, index=True)
     content = Column(String)
     author = Column(String, index=True)
-    timestamp = Column(DateTime, index=True, default=datetime.now)
+    timestamp = Column(DateTime, index=True, default=datetime.utcnow)
     board_id = Column(Integer, ForeignKey('boards.id'))
 
     board = relationship("Board", back_populates="posts")
