@@ -268,7 +268,6 @@ def test_modify_post(client, clear_database):
         "timestamp": timestamp,
         "board_id": board_id
     })
-    print(response.json())
     assert response.status_code == 200
 
 def test_modify_post_board_id_not_found(client, clear_database):
