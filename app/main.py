@@ -107,6 +107,31 @@ async def retrieve_posts(boardId: int, offset: int, limit: int, db: Session=Depe
     if not db_posts: # This checks for an empty list as well as None
         raise HTTPException(status_code=404, detail="No posts found")
     return db_posts
+    
+@app.patch("/boards/{boardId}/posts/{postId}", status_code=status.HTTP_200_OK, response_model=schemas.PostResponse)    
+async def modify_post(boardId: int, postId: int, post: schemas.PostResponse, db: Session = Depends(get_db)) -> Optional[Post]:
+    db_board = crud.get_board_by_id(db, id=boardId)
+    if db_board is None:
+        raise HTTPException(status_code=404, detail="Board with this ID does not exist")
+    
+    db_post = crud.get_post_by_id(db, boardId, postId)
+    if db_post is None:
+        raise HTTPException(status_code=404, detail="Post with this ID does not exist")
+    
+    updated_post = crud.update_post(db, db_post, post)
+    return updated_post
+
+@app.delete("/boards/{boardId}/posts/{postId}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post(boardId: int, postId: int, db: Session = Depends(get_db)):
+    db_board = crud.get_board_by_id(db, id=boardId)
+    if db_board is None:
+        raise HTTPException(status_code=404, detail="Board with this ID does not exist")
+    
+    db_post = crud.get_post_by_id(db, boardId, postId)
+    if db_post is None:
+        raise HTTPException(status_code=404, detail="Post with this ID does not exist")
+    
+    crud.delete_post(db, db_post)
 
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):

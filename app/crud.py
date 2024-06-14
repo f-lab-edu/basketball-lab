@@ -45,3 +45,16 @@ def delete_board(db: Session, id:int):
 
 def get_posts_by_board_id(db: Session, board_id: int, offset: int, limit: int) -> List[Post]:
     return db.query(Post).filter(Post.board_id == board_id).offset(offset).limit(limit).all()
+
+def update_post(db: Session, db_post: Post, post: schemas.PostResponse) -> Post:
+    update_data = post.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_post, key, value)
+    db.add(db_post)
+    db.commit()
+    db.refresh(db_post)
+    return db_post
+
+def delete_post(db: Session, post: Post):
+    db.delete(post)
+    db.commit()
