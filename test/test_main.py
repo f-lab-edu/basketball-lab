@@ -131,6 +131,16 @@ def test_modify_board_description_empty(client):
     assert response.status_code == 200
     assert response.json()["description"] == ""
 
+def test_delete_board(client):
+    create_response = create_board_response(client)
+    response = client.delete("/boards/"+str(create_response.json()["id"]))
+    assert response.status_code == 204
+
+def test_delete_board_id_not_found(client):
+    time_sec = int(time.time())
+    response = client.delete("/boards/"+str(time_sec))
+    assert response.status_code == 404
+    
 def test_create_post(client):
     board_response = create_board_response(client)
     assert board_response.status_code == 201

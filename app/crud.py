@@ -33,5 +33,15 @@ def create_post(db: Session, post: schemas.PostRequest, board_id: int) -> Post:
 def get_post_by_id(db: Session, board_id: int, post_id:int) -> Optional[Post]:
     return db.query(Post).filter(Post.id == post_id, Post.board_id == board_id).first()
 
+def get_all_boards(db: Session):
+    return db.query(models.Board).all() # all method returns lists only, not None
+
+def delete_board(db: Session, id:int):
+    delete_board = db.query(models.Board).filter(models.Board.id == id).delete()
+    if delete_board == 0:
+        return False
+    else:
+        return True
+
 def get_posts_by_board_id(db: Session, board_id: int, offset: int, limit: int) -> List[Post]:
     return db.query(Post).filter(Post.board_id == board_id).offset(offset).limit(limit).all()
